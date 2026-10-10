@@ -1,0 +1,41 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  mode: "debug" # debug | release
+
+jwt:
+  secret: "change-this-to-a-long-random-secret-in-production-please-32chars+"
+  issuer: "bastion-gateway"
+  access_token_ttl: 15m
+  refresh_token_ttl: 168h # 7 days
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+rate_limit:
+  enabled: true
+  requests_per_minute: 60
+  burst: 20
+  # Per API key / user higher limits can be added later
+
+waf:
+  enabled: true
+  block_on_match: true
+  max_body_size: 1048576 # 1MB
+  # Basic patterns (extendable)
+  blocked_patterns:
+    - "(?i)(union\\s+select|select\\s+.*from|insert\\s+into|drop\\s+table)"
+    - "(?i)(<script|javascript:|onerror=|onload=)"
+    - "(?i)(\\.\\./|%2e%2e%2f|%252e%252e%252f)"
+    - "(?i)(or\\s+1=1|and\\s+1=1|'\\s*or\\s*'1'='1)"
+
+upstream:
+  # Example backend this gateway protects
+  url: "http://localhost:3000"
+  timeout: 10s
+
+logging:
+  level: "info"
+  format: "json"
